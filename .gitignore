@@ -2,6 +2,8 @@
 
 # dependencies
 node_modules
+.env
+/fontawesome-free-5.15.4-web
 /.pnp
 .pnp.js
 
