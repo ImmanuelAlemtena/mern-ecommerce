@@ -5,6 +5,7 @@ import Rating from './Rating';
 import axios from 'axios';
 import { useContext } from 'react';
 import { Store } from '../Store';
+import { toast } from 'react-toastify';
 
 function Product(props) {
   const { product } = props;
@@ -18,9 +19,7 @@ function Product(props) {
   const addToCartHandler = async (item) => {
     const { data } = await axios.get(`api/products/${item._id}`);
     if (data.countInStock < quantity) {
-      window.alert(
-        'sorry.product out of stock' + product.countInStock + ' ' + quantity
-      );
+      toast.error('sorry.product out of stock');
       return;
     }
     ctxdispatch({
@@ -40,13 +39,14 @@ function Product(props) {
         </Link>
         <Rating rating={product.rating} numReview={product.numReviews} />
         <Card.Text>${product.price}</Card.Text>
-        {product.countInStock < quantity ? (
+        <Button onClick={() => addToCartHandler(product)}>Add to cart</Button>
+        {/* {product.countInStock < quantity ? (
           <Button variant="light" disabled>
             Out of Stock
           </Button>
         ) : (
-          <Button onClick={() => addToCartHandler(product)}>Add to cart</Button>
-        )}
+          
+        )} */}
       </Card.Body>
     </Card>
   );

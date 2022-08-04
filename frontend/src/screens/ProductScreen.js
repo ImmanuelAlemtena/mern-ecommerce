@@ -13,6 +13,7 @@ import { getError } from '../utils';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { Store } from '../Store';
+import { toast } from 'react-toastify';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -29,7 +30,7 @@ const reducer = (state, action) => {
 
 function ProductScreen() {
   const params = useParams();
-  const { _id } = params;
+  const { id } = params;
   //console.log(_id);
   const [{ loading, error, product }, dispatch] = useReducer(reducer, {
     loading: true,
@@ -40,14 +41,14 @@ function ProductScreen() {
     const fetchData = async () => {
       dispatch({ type: 'FETCH_REQUEST' });
       try {
-        const result = await axios.get(`/api/products/${_id}`);
+        const result = await axios.get(`/api/products/${id}`);
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
     };
     fetchData();
-  }, [_id]);
+  }, [id]);
 
   const { state, dispatch: ctxdispatch } = useContext(Store);
   const { cart } = state;
@@ -55,9 +56,10 @@ function ProductScreen() {
   async function addToCartHandler() {
     const existItem = cart.cartItem.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    const { data } = await axios.get(`/api/products/${_id}`);
+    const { data } = await axios.get(`/api/products/${id}`);
     if (data.countInStock < quantity) {
-      window.alert('sorry.product out of stock');
+      toast.error('sorry.product out of stock');
+      // alert('sorry.product out of stock');
       return;
     }
     ctxdispatch({
